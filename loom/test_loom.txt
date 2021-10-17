@@ -1,0 +1,150 @@
+using System;
+using System.Collections.Generic;
+
+// To execute C#, please define "static void Main" on a class
+// named Solution.
+
+class Solution
+{
+    static void Main(string[] args)
+    {
+        var spreadSheet = new Sheet();
+        
+        //Console.WriteLine(spreadSheet.Get("-2310"));
+        
+        // Console.WriteLine(spreadSheet.Get("10"));
+        
+        //Console.WriteLine(spreadSheet.Get("A10"));
+        
+        spreadSheet.Put("A1", "1");
+        Console.WriteLine(spreadSheet.Get("A1"));
+                          
+        spreadSheet.Put("B1", "1");
+        spreadSheet.Put("B2", "2");
+        spreadSheet.Put("B3", "=B1+B3");   
+        Console.WriteLine(spreadSheet.Get("B3"));
+        
+        spreadSheet.Put("B1", "1");
+        spreadSheet.Put("B2", "2");
+        spreadSheet.Put("B3", "=B1+B2");   
+        spreadSheet.Put("B4", "=B1+B2+B3");   
+        Console.WriteLine(spreadSheet.Get("B4"));     
+        
+        
+        spreadSheet.Put("C1", "1");
+        spreadSheet.Put("C2", "2");
+        spreadSheet.Put("C3", "=C1+C2");   
+        Console.WriteLine(spreadSheet.Get("C3")); 
+        spreadSheet.Put("C2", "5");
+        Console.WriteLine(spreadSheet.Get("C3"));  
+        spreadSheet.Put("C4", "=C1+C2+C3");   
+        Console.WriteLine(spreadSheet.Get("C4"));     
+    }
+    
+    
+    
+    class Cell
+    {
+        public enum DataType {
+            Function= 0,
+            Value = 1
+        };
+        
+        public Cell()
+        {
+        }
+        
+        public static bool VerifyCellAddress(string cellAddress)
+        {
+            return true;
+        }
+        
+        public static bool VerifyEntry(string cellAddress)
+        {
+            return true;
+        }
+        
+        public void AddNewEntry(string entry)
+        {
+            if (entry[0] == '=') {
+                Type = DataType.Function;
+            } else {
+                Type = DataType.Value;
+            } 
+            
+            Data = entry;
+        }
+        
+        public DataType Type {get; set;}
+        public string Data {get; set;}
+    }
+    
+    class Sheet {
+        Dictionary<string, Cell> spreadSheetData;
+        
+        public Sheet()
+        {
+            spreadSheetData = new Dictionary<string, Cell>();
+        }
+        
+        public bool Put(string cellAddress, string entry)
+        {
+            if(Cell.VerifyCellAddress(cellAddress) && Cell.VerifyEntry(entry))
+            {
+                if(!spreadSheetData.ContainsKey(cellAddress))
+                {
+                    spreadSheetData.Add(cellAddress, new Cell());
+                } 
+                
+                spreadSheetData[cellAddress].AddNewEntry(entry);
+                
+                    
+                return true;
+            } else {
+                throw new Exception("Invalid cell address");
+            }
+            
+        }
+        
+        public string Get(string cellAddress)
+        {
+            if(cellAddress != ""){
+                if(spreadSheetData.ContainsKey(cellAddress))
+                {
+                    switch(spreadSheetData[cellAddress].Type)
+                    {
+                        case Cell.DataType.Value:
+                            return spreadSheetData[cellAddress].Data;
+                        case Cell.DataType.Function:
+                            return EvaluateFunction(spreadSheetData[cellAddress].Data);
+                    }
+                } else  {
+                    throw new Exception("Cell " + cellAddress + " doesn't contain data");
+                }
+            }
+            return "";
+        }
+        
+        private string EvaluateFunction(string function)
+        {
+            var result = 0;
+            
+            var split = function.Split('=', '+');
+            foreach(var entry in split)
+            {
+                int number = 0;
+                var entryValue="";
+                if (Cell.VerifyCellAddress(entry)){
+                    entryValue = this.Get(entry);
+                } else if (Cell.VerifyEntry(entry)) {
+                    entryValue = entry;
+                }
+                int.TryParse(entryValue, out number);
+                result += number;
+                    
+            }
+            
+            return result.ToString();
+        }
+    }
+}

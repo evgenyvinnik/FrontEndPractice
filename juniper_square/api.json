@@ -1,0 +1,600 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Juniper Square Lite",
+        "description": "The core functionality of Juniper Square's CRM tool",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8081",
+            "description": "Local development server"
+        }
+    ],
+    "paths": {
+        "/users": {
+            "post": {
+                "summary": "Create a new user.",
+                "description": "Creates a new user according to the provided properties",
+                "requestBody": {
+                    "required": true,
+                    "description": "Properties for the user to create.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserCreateProperties"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    }
+                }
+            },
+            "get": {
+                "summary": "Returns a list of users.",
+                "description": "Returns the list of users, optionally filtered by providing query parameters to the request.",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "description": "The search query for either some users' names or email addresses",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tags",
+                        "in": "query",
+                        "required": false,
+                        "description": "The tags to initially refine the result set; returned users will have at least one of the specified tags",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "style": "form",
+                        "explode": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of users",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "users": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/User"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "users"
+                                    ]
+                                },
+                                "example": {
+                                    "users": [
+                                        {
+                                            "id": 1,
+                                            "name": "Adam Ginsburg",
+                                            "email": "adam@junipersquare.com",
+                                            "tags": [
+                                                "Founder"
+                                            ]
+                                        },
+                                        {
+                                            "id": 2,
+                                            "name": "Alex Robinson",
+                                            "email": "alex@junipersquare.com",
+                                            "tags": [
+                                                "Founder"
+                                            ]
+                                        },
+                                        {
+                                            "id": 3,
+                                            "name": "Yonas Fisseha",
+                                            "email": "yonas@junipersquare.com",
+                                            "tags": [
+                                                "Founder"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{user_id}": {
+            "get": {
+                "summary": "Fetches a single user by ID",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/URLUserId"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User corresponding to the provided ID.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid user ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "code": 400,
+                                    "message": "Invalid user ID"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No user exists with the given user ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "code": 404,
+                                    "message": "No such user with ID 293874"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update the user with the given ID.",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/URLUserId"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "Properties for the user to update.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserProperties"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "The user was successfully updated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Deletes a user.",
+                "description": "Deletes a user with the specified ID.",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/URLUserId"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "User successfully deleted."
+                    },
+                    "400": {
+                        "description": "The specified user ID is not a valid user ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The specified user does not exist.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{user_id}/notes": {
+            "get": {
+                "summary": "Get notes for a user.",
+                "description": "Get the notes associated with a specified user",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/URLUserId"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "notes": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Note"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "notes"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Add a note for a user.",
+                "description": "Create a new note on the specified user",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/URLUserId"
+                    }
+                ],
+                "requestBody": {
+                    "description": "The content for the note",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NoteCreateProperties"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Note"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{user_id}/notes/{note_id}": {
+            "put": {
+                "summary": "Update a note on a user.",
+                "description": "Update a specific note for the specified user",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/URLUserId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/URLNoteId"
+                    }
+                ],
+                "requestBody": {
+                    "description": "The content for the note",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NoteCreateProperties"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Note"
+                                },
+                                "example": {
+                                    "id": 12,
+                                    "content": "I saw Dr. No at the coffee shop. He said he'd be interested in the island plot.",
+                                    "created_at": "2020-02-04T20:01:38.091Z"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "code": 404,
+                                    "message": "There is no user with the ID 12345"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "code": 422,
+                                    "message": "The specified note does not belong to the given user."
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a note from a user.",
+                "description": "Deletes a specific note for the specified user",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/URLUserId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/URLNoteId"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Note successfully deleted"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                },
+                                "example": {
+                                    "code": 404,
+                                    "message": "There is no user with the ID 12345 with note 6789"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "responses": {
+            "NotFound": {
+                "description": "The specified resource was not found.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    }
+                }
+            },
+            "UnprocessableEntity": {
+                "description": "The request data is not acceptable.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "parameters": {
+            "URLUserId": {
+                "name": "user_id",
+                "in": "path",
+                "required": true,
+                "description": "The ID of the relevant user.",
+                "schema": {
+                    "type": "integer"
+                }
+            },
+            "URLNoteId": {
+                "name": "note_id",
+                "in": "path",
+                "required": true,
+                "description": "The ID of the relevant note.",
+                "schema": {
+                    "type": "integer"
+                }
+            }
+        },
+        "schemas": {
+            "Error": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "code",
+                    "message"
+                ]
+            },
+            "NoteID": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Unique identifier for a Note."
+                    }
+                },
+                "required": [
+                    "id"
+                ]
+            },
+            "NoteCreateProperties": {
+                "type": "object",
+                "properties": {
+                    "content": {
+                        "type": "string",
+                        "description": "The contents of the Note."
+                    }
+                },
+                "required": [
+                    "content"
+                ]
+            },
+            "NoteProperties": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/NoteCreateProperties"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "user_id": {
+                                "type": "integer",
+                                "description": "The unique identifier for a user"
+                            },
+                            "created_at": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        },
+                        "required": [
+                            "user_id",
+                            "created_at"
+                        ]
+                    }
+                ]
+            },
+            "Note": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/NoteID"
+                    },
+                    {
+                        "$ref": "#/components/schemas/NoteProperties"
+                    }
+                ]
+            },
+            "UserID": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "The unique identifier for a user."
+                    }
+                },
+                "required": [
+                    "id"
+                ]
+            },
+            "UserCreateProperties": {
+                "type": "object",
+                "description": "Properties required to create a new User.",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "The full name of a user."
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "The email address contact for a user."
+                    }
+                },
+                "required": [
+                    "name",
+                    "email"
+                ]
+            },
+            "UserProperties": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/UserCreateProperties"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "tags": {
+                                "type": "array",
+                                "description": "Set of ad-hoc tags for grouping Users.",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "required": [
+                            "tags"
+                        ]
+                    }
+                ]
+            },
+            "User": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/UserID"
+                    },
+                    {
+                        "$ref": "#/components/schemas/UserProperties"
+                    }
+                ],
+                "example": {
+                    "id": 1234,
+                    "name": "Vincent Biz",
+                    "email": "vincent@factory.biz",
+                    "tags": []
+                }
+            }
+        }
+    }
+}

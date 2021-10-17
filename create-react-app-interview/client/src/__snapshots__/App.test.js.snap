@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App renders with \`enzyme\` 1`] = `
+<h1>
+  Hello World
+</h1>
+`;
+
+exports[`App renders with \`react-test-renderer\` 1`] = `
+<h1>
+  Hello World
+</h1>
+`;

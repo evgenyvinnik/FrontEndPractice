@@ -1,0 +1,91 @@
+const fs = require('fs');
+const csv = require('csv-parser');
+
+function processLogEntries(logEntry) {
+    const customerSet = new Set();
+    const customerMap = new Map();
+    const treePagePathMap = new Map();
+
+    var mostPopularVisited = 0;
+    var mostPopularThreePath = '';
+    var slowestThreePath = '';
+    var unhappiestCustomer = '';
+    var longestLatency = 0;
+
+    logEntry.forEach(element => {
+        customerSet.add(element.customerId);
+    });
+
+    customerSet.forEach(element => {
+        customerMap[element] = [];
+    });
+
+    logEntry.forEach(element => {
+        customerMap[element.customerId].push(
+            {
+                timestamp: Number(element.timestamp),
+                pageId: element.pageId,
+                milliseconds: Number(element.milliseconds)
+            }
+        );
+    });
+
+    for (var m in customerMap) {
+        if (customerMap[m].length >= 3) {
+            for (var i=0;i<customerMap[m].length-2;i++) {
+                var threePagePath = '' + customerMap[m][i].pageId + customerMap[m][i+1].pageId + customerMap[m][i+2].pageId;
+                var latency = customerMap[m][i].milliseconds + customerMap[m][i+1].milliseconds + customerMap[m][i+2].milliseconds;
+
+                if (latency > longestLatency) {
+                    unhappiestCustomer = m;
+                    slowestThreePath = threePagePath;
+                    longestLatency = latency;
+                }
+
+                if (treePagePathMap.has(threePagePath)) {
+                    treePagePathMap.set(threePagePath, treePagePathMap.get(threePagePath) + 1);
+                }
+                else {
+                    treePagePathMap.set(threePagePath, 1);
+                }
+            }
+        }
+    } 
+
+    treePagePathMap.forEach(function(value, key) {
+        if (value > mostPopularVisited){
+            mostPopularVisited = value;
+            mostPopularThreePath = key;
+        }
+    });
+
+    return {
+        mostPopularThreePagePath: mostPopularThreePath,
+        mostPopularThreePageVisited: mostPopularVisited,
+        slowestThreePagePath: slowestThreePath,
+        slowestCustomer: unhappiestCustomer,
+        slowestLatency: longestLatency
+    };
+}
+
+function readCsv(filename) {
+    var logEntry = [];
+    fs.createReadStream(filename)
+        .pipe(csv(['timestamp', 'customerId', 'pageId', 'milliseconds']))
+        .on('data', (row) => {
+            logEntry.push(
+                {
+                    timestamp: Number(row.timestamp),
+                    customerId: row.customerId,
+                    pageId: row.pageId,
+                    milliseconds: Number(row.milliseconds)
+                });
+        })
+        .on('end', () => {
+            console.log(processLogEntries(logEntry));
+        });
+
+}
+
+readCsv('input1.csv');
+readCsv('input2.csv');

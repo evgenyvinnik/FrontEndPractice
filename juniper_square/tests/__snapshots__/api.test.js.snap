@@ -1,0 +1,190 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`API DELETE /users/:userId should respond with an HTTP 400 if the userId is not a number 1`] = `
+Object {
+  "code": 400,
+  "message": "Invalid user ID",
+}
+`;
+
+exports[`API DELETE /users/:userId should respond with an HTTP 404 if the specified user does not exist 1`] = `
+Object {
+  "code": 404,
+  "message": "No such user with ID 1987345",
+}
+`;
+
+exports[`API DELETE /users/:userId/notes/:noteId should delete a note if the provided noteId is associated to the userId 1`] = `Object {}`;
+
+exports[`API DELETE /users/:userId/notes/:noteId should respond with an HTTP 400 if the noteId is not a number 1`] = `
+Object {
+  "code": 400,
+  "message": "Invalid note ID",
+}
+`;
+
+exports[`API DELETE /users/:userId/notes/:noteId should respond with an HTTP 400 if the userId is not a number 1`] = `
+Object {
+  "code": 400,
+  "message": "Invalid user ID",
+}
+`;
+
+exports[`API DELETE /users/:userId/notes/:noteId should respond with an HTTP 404 if the specified note belongs to a different user 1`] = `
+Object {
+  "code": 404,
+  "message": "There is no user with the ID 1 with note 1",
+}
+`;
+
+exports[`API DELETE /users/:userId/notes/:noteId should respond with an HTTP 404 if the specified note does not exist 1`] = `
+Object {
+  "code": 404,
+  "message": "There is no user with the ID 1 with note 12345",
+}
+`;
+
+exports[`API DELETE /users/:userId/notes/:noteId should respond with an HTTP 404 if the specified user does not exist 1`] = `
+Object {
+  "code": 404,
+  "message": "No such user with ID 1987345",
+}
+`;
+
+exports[`API GET /users/:userId should respond with an HTTP 400 if the userId is not a number 1`] = `
+Object {
+  "code": 400,
+  "message": "Invalid user ID",
+}
+`;
+
+exports[`API GET /users/:userId should respond with an HTTP 404 if the userId doesn't match any known user 1`] = `
+Object {
+  "code": 404,
+  "message": "No such user with ID 293874",
+}
+`;
+
+exports[`API GET /users/:userId should return the user with the given id 1`] = `
+Object {
+  "email": "morgan.first@example.com",
+  "id": 1,
+  "name": "Morgan First",
+}
+`;
+
+exports[`API GET /users/:userId/notes should respond with an HTTP 400 if the userId is not a number 1`] = `
+Object {
+  "code": 400,
+  "message": "Invalid user ID",
+}
+`;
+
+exports[`API GET /users/:userId/notes should respond with an HTTP 404 if the specified user does not exist 1`] = `
+Object {
+  "code": 404,
+  "message": "No such user with ID 1987345",
+}
+`;
+
+exports[`API GET /users/:userId/notes should return a list of notes associated with a given user 1`] = `
+Object {
+  "notes": Array [
+    Object {
+      "content": "Notable commentary on this user",
+      "created_at": "2020-02-11T05:41:00.000Z",
+      "id": 1,
+      "user_id": 2,
+    },
+    Object {
+      "content": "This is less notable than the other commentary.",
+      "created_at": "2020-02-11T05:43:00.000Z",
+      "id": 2,
+      "user_id": 2,
+    },
+  ],
+}
+`;
+
+exports[`API GET /users/:userId/notes should return an empty list if the user has no notes 1`] = `
+Object {
+  "notes": Array [],
+}
+`;
+
+exports[`API POST /users/:userId/notes should reject a request without a 'content' field 1`] = `401`;
+
+exports[`API POST /users/:userId/notes should respond with an HTTP 404 if the userId doesn't match any known user 1`] = `404`;
+
+exports[`API PUT /users/:userId should respond with an HTTP 400 if the userId is not a number 1`] = `
+Object {
+  "code": 400,
+  "message": "Invalid user ID",
+}
+`;
+
+exports[`API PUT /users/:userId should respond with an HTTP 404 if the userId doesn't match any known user 1`] = `
+Object {
+  "code": 404,
+  "message": "No such user with ID 29837",
+}
+`;
+
+exports[`API PUT /users/:userId should respond with an HTTP 422 if the body is missing required fields 1`] = `
+Object {
+  "code": 422,
+  "message": "Request body missing fields email",
+}
+`;
+
+exports[`API PUT /users/:userId should respond with an HTTP 422 if the body is missing required fields 2`] = `
+Object {
+  "code": 422,
+  "message": "Request body missing fields name",
+}
+`;
+
+exports[`API PUT /users/:userId should update the user with the provided details 1`] = `
+Object {
+  "email": "sam.esmail@f.society.com",
+  "id": 2,
+  "name": "Sam Esmail",
+}
+`;
+
+exports[`API PUT /users/:userId/notes/:noteId should respond with an HTTP 400 if the userId is not a number 1`] = `
+Object {
+  "code": 400,
+  "message": "Invalid note ID",
+}
+`;
+
+exports[`API PUT /users/:userId/notes/:noteId should respond with an HTTP 404 if the noteId doesn't match any known note for the user 1`] = `
+Object {
+  "code": 404,
+  "message": "The specified note does not belong to the given user.",
+}
+`;
+
+exports[`API PUT /users/:userId/notes/:noteId should respond with an HTTP 404 if the noteId is held by a different user 1`] = `
+Object {
+  "code": 404,
+  "message": "The specified note does not belong to the given user.",
+}
+`;
+
+exports[`API PUT /users/:userId/notes/:noteId should respond with an HTTP 422 if the body is missing required fields 1`] = `
+Object {
+  "code": 422,
+  "message": "Request body missing fields content",
+}
+`;
+
+exports[`API PUT /users/:userId/notes/:noteId should update the note with the provided details 1`] = `
+Object {
+  "content": "Greg has a new investment advisor -- Sherman Advisors. I updated the communications preferences accordingly.",
+  "created_at": "2020-02-11T05:41:00.000Z",
+  "id": 1,
+  "user_id": 2,
+}
+`;
